@@ -1,12 +1,16 @@
 package com.cping.springbootmall.model;
 
+import com.cping.springbootmall.constant.ProductCategory;
+
 import java.util.Date;
 
 public class Product {
 
     private Integer productId;
     private String productName;
-    private String category;
+    // 用String類型儲存，會無法從Spring Boot程式中知道到底有哪些商品的分類
+    // 如果對比較底層的class做任何的改動時，一定要檢查「RowMapper」是否需要調整
+    private ProductCategory category;
     private String imageUrl;
     private Integer price;
     private Integer stock;
@@ -30,11 +34,11 @@ public class Product {
         this.productName = productName;
     }
 
-    public String getCategory() {
+    public ProductCategory getCategory() {
         return category;
     }
 
-    public void setCategory(String category) {
+    public void setCategory(ProductCategory category) {
         this.category = category;
     }
 
