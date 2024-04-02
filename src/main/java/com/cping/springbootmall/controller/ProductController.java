@@ -1,5 +1,6 @@
 package com.cping.springbootmall.controller;
 
+import com.cping.springbootmall.constant.ProductCategory;
 import com.cping.springbootmall.dto.ProductRequest;
 import com.cping.springbootmall.model.Product;
 import com.cping.springbootmall.service.ProductService;
@@ -21,9 +22,20 @@ public class ProductController {
     // 查詢商品列表
     // 即使商品數據不存在，但「/products」這個API是存在的，所以還是會回200給前端
     @GetMapping("/products")
-    public ResponseEntity<List<Product>> getProducts() {
+    public ResponseEntity<List<Product>> getProducts(
+            // 依category條件去查詢
+            // @RequestParam 表示從url中取得請求參數
+            // Spring Boot會自動將前端傳過來的字串去轉換成「ProductCategory」這個Enum
+            // category應該為「可選」參數，而不是「必選」參數
+            // 加入「required = false」，category變為「可選」參數
+            @RequestParam(required = false) ProductCategory category,
+            // 依關鍵字條件去查詢
+            @RequestParam(required = false) String search
+    ) {
 
-        List<Product> productList = productService.getProducts();
+        // 依category條件去查詢
+        // 依關鍵字條件去查詢
+        List<Product> productList = productService.getProducts(category, search);
 
         return ResponseEntity.status(HttpStatus.OK).body(productList);
     }

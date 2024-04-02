@@ -1,5 +1,6 @@
 package com.cping.springbootmall.service.impl;
 
+import com.cping.springbootmall.constant.ProductCategory;
 import com.cping.springbootmall.dao.ProductDao;
 import com.cping.springbootmall.dto.ProductRequest;
 import com.cping.springbootmall.model.Product;
@@ -18,11 +19,11 @@ public class ProductServiceImpl implements ProductService {
     private ProductDao productDao;
 
     // 查詢商品列表
-
-
+    // 依category條件去查詢
+    // 依關鍵字條件去查詢
     @Override
-    public List<Product> getProducts() {
-        return productDao.getProducts();
+    public List<Product> getProducts(ProductCategory category, String search) {
+        return productDao.getProducts(category, search);
     }
 
     // 依id查詢
