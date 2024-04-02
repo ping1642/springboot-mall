@@ -49,4 +49,31 @@ public class ProductController {
         // 回給前端201
         return ResponseEntity.status(HttpStatus.CREATED).body(product);
     }
+
+    // 修改商品
+    // 記得參數要加「@Valid」，這樣新的class「ProductRequest」的「@NotNull」才會生效
+    @PutMapping("products/{productId}")
+    public ResponseEntity<Product> updateProduct(@PathVariable Integer productId,
+                                                 @RequestBody @Valid ProductRequest productRequest) {
+
+        // 1.先查詢要更新的商品有沒有在資料庫內
+        Product product = productService.getProductById(productId);
+
+        if (product == null) {
+            // 不存在回傳404給前端
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+
+        // 2.修改商品數據
+        // (要更新的是哪一個商品, 商品修改過後的值是什麼)
+        // updateProduct不會返回值
+        productService.updateProduct(productId, productRequest);
+
+        // 查詢更新商品數據
+        Product updatedProduct = productService.getProductById(productId);
+
+        // 回傳ResponseEntity給前端，updatedProduct放在boby傳給前端
+        return ResponseEntity.status(HttpStatus.OK).body(updatedProduct);
+
+    }
 }

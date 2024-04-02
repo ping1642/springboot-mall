@@ -11,4 +11,6 @@ public interface ProductDao {
     // 新增商品
     Integer createProduct(ProductRequest productRequest);
 
+    // 修改商品
+    void updateProduct(Integer productId, ProductRequest productRequest);
 }

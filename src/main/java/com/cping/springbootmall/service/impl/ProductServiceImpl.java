@@ -14,6 +14,7 @@ public class ProductServiceImpl implements ProductService {
     @Autowired
     private ProductDao productDao;
 
+    // 依id查詢
     @Override
     public Product getProductById(Integer productId) {
 
@@ -21,8 +22,15 @@ public class ProductServiceImpl implements ProductService {
 
     }
 
+    // 新增商品
     @Override
     public Integer createProduct(ProductRequest productRequest) {
         return productDao.createProduct(productRequest);
+    }
+
+    // 修改商品
+    @Override
+    public void updateProduct(Integer productId, ProductRequest productRequest) {
+        productDao.updateProduct(productId, productRequest);
     }
 }
