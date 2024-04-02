@@ -1,6 +1,7 @@
 package com.cping.springbootmall.controller;
 
 import com.cping.springbootmall.constant.ProductCategory;
+import com.cping.springbootmall.dto.ProductQueryParams;
 import com.cping.springbootmall.dto.ProductRequest;
 import com.cping.springbootmall.model.Product;
 import com.cping.springbootmall.service.ProductService;
@@ -33,9 +34,15 @@ public class ProductController {
             @RequestParam(required = false) String search
     ) {
 
+        // 將前端的參數值存在productQueryParams
+        ProductQueryParams productQueryParams = new ProductQueryParams();
+        productQueryParams.setCategory(category);
+        productQueryParams.setSearch(search);
+
         // 依category條件去查詢
         // 依關鍵字條件去查詢
-        List<Product> productList = productService.getProducts(category, search);
+        // 一併將參數值傳出去
+        List<Product> productList = productService.getProducts(productQueryParams);
 
         return ResponseEntity.status(HttpStatus.OK).body(productList);
     }

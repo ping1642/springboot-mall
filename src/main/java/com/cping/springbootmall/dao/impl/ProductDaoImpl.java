@@ -2,6 +2,7 @@ package com.cping.springbootmall.dao.impl;
 
 import com.cping.springbootmall.constant.ProductCategory;
 import com.cping.springbootmall.dao.ProductDao;
+import com.cping.springbootmall.dto.ProductQueryParams;
 import com.cping.springbootmall.dto.ProductRequest;
 import com.cping.springbootmall.model.Product;
 import com.cping.springbootmall.rowmapper.ProductRowMapper;
@@ -29,8 +30,9 @@ public class ProductDaoImpl implements ProductDao {
     // 依category條件去查詢(WHERE 1=1主要是可以自由的去拼接sql語法的後面)
     // WHERE 1=1 不會造成查詢影響
     // 依關鍵字條件去查詢
+    // 一併將參數值傳出去
     @Override
-    public List<Product> getProducts(ProductCategory category, String search) {
+    public List<Product> getProducts(ProductQueryParams productQueryParams) {
         String sql = "SELECT product_id, product_name, category, image_url, price, stock, description, " +
                 "created_date, last_modified_date " +
                 "FROM product WHERE 1=1";
@@ -38,18 +40,18 @@ public class ProductDaoImpl implements ProductDao {
         Map<String,Object> map = new HashMap<>();
 
         // 依category條件去查詢
-        if (category != null) {
+        if (productQueryParams.getCategory() != null) {
             sql = sql + " AND category = :category";
             // 將前端傳過來商品種類的值(category)加到map內
             // .name() 是將Enum類型轉成字串
-            map.put("category", category.name());
+            map.put("category", productQueryParams.getCategory().name());
         }
 
         // 依關鍵字條件去查詢
-        if (search != null) {
+        if (productQueryParams.getSearch() != null) {
             sql = sql + " AND product_name LIKE :search";
             // 「%」一定要寫在map裡，再根據變數傳進去
-            map.put("search", "%" + search + "%");
+            map.put("search", "%" + productQueryParams.getSearch() + "%");
         }
 
         List<Product> productList = namedParameterJdbcTemplate.query(sql, map, new ProductRowMapper());

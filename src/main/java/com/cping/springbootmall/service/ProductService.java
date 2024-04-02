@@ -1,6 +1,7 @@
 package com.cping.springbootmall.service;
 
 import com.cping.springbootmall.constant.ProductCategory;
+import com.cping.springbootmall.dto.ProductQueryParams;
 import com.cping.springbootmall.dto.ProductRequest;
 import com.cping.springbootmall.model.Product;
 
@@ -11,7 +12,8 @@ public interface ProductService {
     // 查詢商品列表
     // 依category條件去查詢
     // 依關鍵字條件去查詢
-    List<Product> getProducts(ProductCategory category, String search);
+    // 一併將參數值傳出去
+    List<Product> getProducts(ProductQueryParams productQueryParams);
 
     // 依id查詢
     Product getProductById(Integer productId);
