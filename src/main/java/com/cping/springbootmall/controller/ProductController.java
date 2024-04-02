@@ -24,6 +24,7 @@ public class ProductController {
     // 即使商品數據不存在，但「/products」這個API是存在的，所以還是會回200給前端
     @GetMapping("/products")
     public ResponseEntity<List<Product>> getProducts(
+            // 查詢條件 Filtering
             // 依category條件去查詢
             // @RequestParam 表示從url中取得請求參數
             // Spring Boot會自動將前端傳過來的字串去轉換成「ProductCategory」這個Enum
@@ -31,13 +32,21 @@ public class ProductController {
             // 加入「required = false」，category變為「可選」參數
             @RequestParam(required = false) ProductCategory category,
             // 依關鍵字條件去查詢
-            @RequestParam(required = false) String search
+            @RequestParam(required = false) String search,
+
+            // 排序 Sorting
+            // 排序(orderBy：根據什麼欄位排序，sort：升冪或降冪排序)
+            // 預設值為created_date，根據這欄位排序
+            @RequestParam(defaultValue = "created_date") String orderBy,
+            @RequestParam(defaultValue = "desc") String sort
     ) {
 
         // 將前端的參數值存在productQueryParams
         ProductQueryParams productQueryParams = new ProductQueryParams();
         productQueryParams.setCategory(category);
         productQueryParams.setSearch(search);
+        productQueryParams.setOrderBy(orderBy);
+        productQueryParams.setSort(sort);
 
         // 依category條件去查詢
         // 依關鍵字條件去查詢
