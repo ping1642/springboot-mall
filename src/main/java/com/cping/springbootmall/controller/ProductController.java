@@ -9,12 +9,24 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 public class ProductController {
 
     // 注入ProductService
     @Autowired
     private ProductService productService;
+
+    // 查詢商品列表
+    // 即使商品數據不存在，但「/products」這個API是存在的，所以還是會回200給前端
+    @GetMapping("/products")
+    public ResponseEntity<List<Product>> getProducts() {
+
+        List<Product> productList = productService.getProducts();
+
+        return ResponseEntity.status(HttpStatus.OK).body(productList);
+    }
 
     // 依id條件查詢
     @GetMapping("/products/{productId}")

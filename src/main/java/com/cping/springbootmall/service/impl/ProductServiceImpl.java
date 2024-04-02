@@ -7,12 +7,23 @@ import com.cping.springbootmall.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 @Component
 public class ProductServiceImpl implements ProductService {
+
 
     // 注入ProductDao
     @Autowired
     private ProductDao productDao;
+
+    // 查詢商品列表
+
+
+    @Override
+    public List<Product> getProducts() {
+        return productDao.getProducts();
+    }
 
     // 依id查詢
     @Override

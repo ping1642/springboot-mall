@@ -7,6 +7,7 @@ import org.springframework.jdbc.core.RowMapper;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+// 從資料庫取得資料轉成「Java Object」
 public class ProductRowMapper implements RowMapper<Product> {
 
     @Override

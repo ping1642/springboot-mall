@@ -3,7 +3,12 @@ package com.cping.springbootmall.service;
 import com.cping.springbootmall.dto.ProductRequest;
 import com.cping.springbootmall.model.Product;
 
+import java.util.List;
+
 public interface ProductService {
+
+    // 查詢商品列表
+    List<Product> getProducts();
 
     // 依id查詢
     Product getProductById(Integer productId);
