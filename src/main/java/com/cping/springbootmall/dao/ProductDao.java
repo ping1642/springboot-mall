@@ -13,4 +13,7 @@ public interface ProductDao {
 
     // 修改商品
     void updateProduct(Integer productId, ProductRequest productRequest);
+
+    // 刪除商品
+    void deleteProductById(Integer productId);
 }
