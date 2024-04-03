@@ -6,13 +6,18 @@ import com.cping.springbootmall.dto.ProductRequest;
 import com.cping.springbootmall.model.Product;
 import com.cping.springbootmall.service.ProductService;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+// 因使用了@Max、@Min，所以須加「@Validated」
+@Validated
 @RestController
 public class ProductController {
 
@@ -38,7 +43,13 @@ public class ProductController {
             // 排序(orderBy：根據什麼欄位排序，sort：升冪或降冪排序)
             // 預設值為created_date，根據這欄位排序
             @RequestParam(defaultValue = "created_date") String orderBy,
-            @RequestParam(defaultValue = "desc") String sort
+            @RequestParam(defaultValue = "desc") String sort,
+
+            // 分頁 Pagination
+            // limit：這次要取得幾筆商品數據，offset：跳過多少筆商品數據(offset 2:表示跳過2筆數據，第三筆開始)
+            // @Max(1000):前端傳過來的參數值最大不能超過1000 @Min(0):不能傳負數
+            @RequestParam(defaultValue = "5") @Max(1000) @Min(0) Integer limit,
+            @RequestParam(defaultValue = "0") @Min(0) Integer offset
     ) {
 
         // 將前端的參數值存在productQueryParams
@@ -47,6 +58,9 @@ public class ProductController {
         productQueryParams.setSearch(search);
         productQueryParams.setOrderBy(orderBy);
         productQueryParams.setSort(sort);
+        productQueryParams.setLimit(limit);
+        productQueryParams.setOffset(offset);
+
 
         // 依category條件去查詢
         // 依關鍵字條件去查詢
