@@ -1,12 +1,14 @@
 package com.cping.springbootmall.dto;
 
 
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 
 
 public class UserRegisterRequest {
 
     @NotBlank
+    @Email // 必須為Email的格式
     private String email;
     @NotBlank
     private String password;
