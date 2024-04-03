@@ -27,28 +27,14 @@ public class ProductDaoImpl implements ProductDao {
     private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
     // 計算商品總筆數
-
-
     @Override
     public Integer countProduct(ProductQueryParams productQueryParams) {
         String sql = "SELECT count(*) FROM product WHERE 1=1";
 
         Map<String,Object> map = new HashMap<>();
 
-        // 依category條件去查詢
-        if (productQueryParams.getCategory() != null) {
-            sql = sql + " AND category = :category";
-            // 將前端傳過來商品種類的值(category)加到map內
-            // .name() 是將Enum類型轉成字串
-            map.put("category", productQueryParams.getCategory().name());
-        }
-
-        // 依關鍵字條件去查詢
-        if (productQueryParams.getSearch() != null) {
-            sql = sql + " AND product_name LIKE :search";
-            // 「%」一定要寫在map裡，再根據變數傳進去
-            map.put("search", "%" + productQueryParams.getSearch() + "%");
-        }
+        // 查詢條件(將共同程式獨立出來使用)
+        sql = addFilteringSql(sql, map, productQueryParams);
 
         // Integer.class是將count值轉換成Integer類型的返回值
         Integer total = namedParameterJdbcTemplate.queryForObject(sql, map, Integer.class);
@@ -69,20 +55,8 @@ public class ProductDaoImpl implements ProductDao {
 
         Map<String,Object> map = new HashMap<>();
 
-        // 依category條件去查詢
-        if (productQueryParams.getCategory() != null) {
-            sql = sql + " AND category = :category";
-            // 將前端傳過來商品種類的值(category)加到map內
-            // .name() 是將Enum類型轉成字串
-            map.put("category", productQueryParams.getCategory().name());
-        }
-
-        // 依關鍵字條件去查詢
-        if (productQueryParams.getSearch() != null) {
-            sql = sql + " AND product_name LIKE :search";
-            // 「%」一定要寫在map裡，再根據變數傳進去
-            map.put("search", "%" + productQueryParams.getSearch() + "%");
-        }
+        // 查詢條件(將共同程式獨立出來使用)
+        sql = addFilteringSql(sql, map, productQueryParams);
 
         // 排序
         // 使用ORDER BY 只能用拼接的方式
@@ -193,4 +167,26 @@ public class ProductDaoImpl implements ProductDao {
 
         namedParameterJdbcTemplate.update(sql,map);
     }
+
+    // 提煉程式：將重複的程式碼獨立出來成一個方法，讓其他方法共同使用此方法
+    private String addFilteringSql(String sql, Map<String,Object> map, ProductQueryParams productQueryParams) {
+        // 依category條件去查詢
+        if (productQueryParams.getCategory() != null) {
+            sql = sql + " AND category = :category";
+            // 將前端傳過來商品種類的值(category)加到map內
+            // .name() 是將Enum類型轉成字串
+            map.put("category", productQueryParams.getCategory().name());
+        }
+
+        // 依關鍵字條件去查詢
+        if (productQueryParams.getSearch() != null) {
+            sql = sql + " AND product_name LIKE :search";
+            // 「%」一定要寫在map裡，再根據變數傳進去
+            map.put("search", "%" + productQueryParams.getSearch() + "%");
+        }
+
+        return sql;
+    }
+
+
 }
