@@ -5,6 +5,7 @@ import com.cping.springbootmall.dto.ProductQueryParams;
 import com.cping.springbootmall.dto.ProductRequest;
 import com.cping.springbootmall.model.Product;
 import com.cping.springbootmall.service.ProductService;
+import com.cping.springbootmall.util.Page;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
@@ -28,7 +29,8 @@ public class ProductController {
     // 查詢商品列表
     // 即使商品數據不存在，但「/products」這個API是存在的，所以還是會回200給前端
     @GetMapping("/products")
-    public ResponseEntity<List<Product>> getProducts(
+    // 改用Page類型的Product數據
+    public ResponseEntity<Page<Product>> getProducts(
             // 查詢條件 Filtering
             // 依category條件去查詢
             // @RequestParam 表示從url中取得請求參數
@@ -61,13 +63,27 @@ public class ProductController {
         productQueryParams.setLimit(limit);
         productQueryParams.setOffset(offset);
 
-
+        // 取得 product list
         // 依category條件去查詢
         // 依關鍵字條件去查詢
         // 一併將參數值傳出去
         List<Product> productList = productService.getProducts(productQueryParams);
 
-        return ResponseEntity.status(HttpStatus.OK).body(productList);
+        // 計算商品總筆數，會根據查詢條件而不同
+        Integer total = productService.countProduct(productQueryParams);
+
+        // 分頁
+        // 將前端的值存到page內，再將由page回傳給前端
+        Page<Product> page = new Page<>();
+        page.setLimit(limit);
+        page.setOffset(offset);
+        page.setTotal(total);
+        // 將查詢的商品數據放到results內，然後回傳給前端
+        page.setResults(productList);
+
+
+
+        return ResponseEntity.status(HttpStatus.OK).body(page);
     }
 
     // 依id條件查詢
