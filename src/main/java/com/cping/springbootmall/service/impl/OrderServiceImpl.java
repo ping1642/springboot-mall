@@ -4,6 +4,7 @@ import com.cping.springbootmall.dao.OrderDao;
 import com.cping.springbootmall.dao.ProductDao;
 import com.cping.springbootmall.dto.BuyItem;
 import com.cping.springbootmall.dto.CreateOrderRequest;
+import com.cping.springbootmall.model.Order;
 import com.cping.springbootmall.model.OrderItem;
 import com.cping.springbootmall.model.Product;
 import com.cping.springbootmall.service.OrderService;
@@ -23,6 +24,21 @@ public class OrderServiceImpl implements OrderService {
     @Autowired
     private ProductDao productDao;
 
+    // 查詢訂單資訊
+    @Override
+    public Order getOrderById(Integer orderId) {
+        // 取得order table的數據
+        Order order = orderDao.getOrderById(orderId);
+
+        // 取得orderItem table的數據
+        List<OrderItem> orderItemList = orderDao.getOrderItemsByOrderId(orderId);
+
+        order.setOrderItemList(orderItemList);
+
+        return order;
+    }
+
+    // 創建訂單
     @Transactional
     @Override
     public Integer createOrder(Integer userId, CreateOrderRequest createOrderRequest) {
