@@ -1,5 +1,6 @@
 package com.cping.springbootmall.controller;
 
+import com.cping.springbootmall.dto.UserLoginRequest;
 import com.cping.springbootmall.dto.UserRegisterRequest;
 import com.cping.springbootmall.model.User;
 import com.cping.springbootmall.service.UserService;
@@ -29,5 +30,15 @@ public class UserController {
 
         // 回傳給前端201
         return ResponseEntity.status(HttpStatus.CREATED).body(user);
+    }
+
+    // 登入功能
+    // 創建新的class來實作登入功能
+    @PostMapping("/users/login")
+    public ResponseEntity<User> login(@RequestBody @Valid UserLoginRequest userLoginRequest) {
+
+        User user = userService.login(userLoginRequest);
+
+        return ResponseEntity.status(HttpStatus.OK).body(user);
     }
 }

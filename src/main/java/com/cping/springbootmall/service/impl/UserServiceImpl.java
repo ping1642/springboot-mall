@@ -1,6 +1,7 @@
 package com.cping.springbootmall.service.impl;
 
 import com.cping.springbootmall.dao.UserDao;
+import com.cping.springbootmall.dto.UserLoginRequest;
 import com.cping.springbootmall.dto.UserRegisterRequest;
 import com.cping.springbootmall.model.User;
 import com.cping.springbootmall.service.UserService;
@@ -44,5 +45,27 @@ public class UserServiceImpl implements UserService {
         // 創建帳號
         // 如果user不為空，就不會執行這行
         return userDao.createUser(userRegisterRequest);
+    }
+
+    // 登入功能
+    @Override
+    public User login(UserLoginRequest userLoginRequest) {
+
+        // 先到資料庫查有沒有相同email
+        User user = userDao.getUserByEmail(userLoginRequest.getEmail());
+
+        // 沒有註冊過
+        if (user == null) {
+            log.warn("該 email: {} 尚未註冊", userLoginRequest.getEmail());
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        }
+
+        // 比對密碼
+        if (user.getPassword().equals(userLoginRequest.getPassword())) {
+            return user;
+        } else {
+            log.warn("email: {} 的密碼不正確", userLoginRequest.getEmail());
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        }
     }
 }

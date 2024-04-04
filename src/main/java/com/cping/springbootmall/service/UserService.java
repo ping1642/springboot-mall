@@ -1,5 +1,6 @@
 package com.cping.springbootmall.service;
 
+import com.cping.springbootmall.dto.UserLoginRequest;
 import com.cping.springbootmall.dto.UserRegisterRequest;
 import com.cping.springbootmall.model.User;
 
@@ -10,4 +11,7 @@ public interface UserService {
 
     // 註冊新帳號
     Integer register(UserRegisterRequest userRegisterRequest);
+
+    // 登入功能
+    User login(UserLoginRequest userLoginRequest);
 }
