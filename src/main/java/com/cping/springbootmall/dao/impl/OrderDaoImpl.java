@@ -1,6 +1,7 @@
 package com.cping.springbootmall.dao.impl;
 
 import com.cping.springbootmall.dao.OrderDao;
+import com.cping.springbootmall.dto.OrderQueryParams;
 import com.cping.springbootmall.model.Order;
 import com.cping.springbootmall.model.OrderItem;
 import com.cping.springbootmall.rowmapper.OrderItemRowMapper;
@@ -22,6 +23,45 @@ public class OrderDaoImpl implements OrderDao {
 
     @Autowired
     private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
+
+    // 取得 order list
+    @Override
+    public List<Order> getOrders(OrderQueryParams orderQueryParams) {
+        String sql = "SELECT order_id, user_id, total_amount, created_date, last_modified_date FROM `order` WHERE 1=1";
+
+        Map<String,Object> map = new HashMap<>();
+
+        // 查詢條件
+        sql = addFilteringSql(sql, map, orderQueryParams);
+
+        // 排序
+        sql = sql + " ORDER BY created_date DESC";
+
+        // 分頁
+        sql = sql + " LIMIT :limit OFFSET :offset";
+        map.put("limit", orderQueryParams.getLimit());
+        map.put("offset", orderQueryParams.getOffset());
+
+        List<Order> orderList = namedParameterJdbcTemplate.query(sql, map, new OrderRowMapper());
+
+        return orderList;
+    }
+
+
+    // 取得 order 總數
+    @Override
+    public Integer countOrder(OrderQueryParams orderQueryParams) {
+        String sql = "SELECT count(*) FROM `order` WHERE 1=1";
+
+        Map<String,Object> map = new HashMap<>();
+
+        // 查詢條件
+        sql = addFilteringSql(sql, map, orderQueryParams);
+
+        Integer total = namedParameterJdbcTemplate.queryForObject(sql, map, Integer.class);
+
+        return  total;
+    }
 
 
     // 取得order table的數據
@@ -88,21 +128,6 @@ public class OrderDaoImpl implements OrderDao {
     @Override
     public void createOrderItems(Integer orderId, List<OrderItem> orderItemList) {
 
-        // 使用 for loop 一條一條 sql 加入數據，效率較低
-//        for (OrderItem orderItem : orderItemList) {
-//
-//            String sql = "INSERT INTO order_item(order_id, product_id, quantity, amount) " +
-//                    "VALUES (:orderId, :productId, :quantity, :amount)";
-//
-//            Map<String,Object> map = new HashMap<>();
-//            map.put("orderId", orderId);
-//            map.put("productId", orderItem.getProductId());
-//            map.put("quantity", orderItem.getQuantity());
-//            map.put("amount", orderItem.getAmount());
-//
-//            namedParameterJdbcTemplate.update(sql, map);
-//        }
-
         // 使用 batchUpdate 一次性加入數據，效率更高
         String sql = "INSERT INTO order_item(order_id, product_id, quantity, amount) " +
                 "VALUES (:orderId, :productId, :quantity, :amount)";
@@ -121,5 +146,15 @@ public class OrderDaoImpl implements OrderDao {
 
         namedParameterJdbcTemplate.batchUpdate(sql, parameterSources);
 
+    }
+
+    // 提煉程式：共同sql語法邏輯
+    private String addFilteringSql(String sql, Map<String,Object> map, OrderQueryParams orderQueryParams) {
+        if (orderQueryParams.getUserId() != null) {
+            sql = sql + " AND user_id = :userId";
+            map.put("userId", orderQueryParams.getUserId());
+        }
+
+        return sql;
     }
 }

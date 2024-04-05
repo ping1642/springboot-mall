@@ -5,6 +5,7 @@ import com.cping.springbootmall.dao.ProductDao;
 import com.cping.springbootmall.dao.UserDao;
 import com.cping.springbootmall.dto.BuyItem;
 import com.cping.springbootmall.dto.CreateOrderRequest;
+import com.cping.springbootmall.dto.OrderQueryParams;
 import com.cping.springbootmall.model.Order;
 import com.cping.springbootmall.model.OrderItem;
 import com.cping.springbootmall.model.Product;
@@ -34,6 +35,29 @@ public class OrderServiceImpl implements OrderService {
     private UserDao userDao;
 
     private final static Logger log = LoggerFactory.getLogger(OrderServiceImpl.class);
+
+    // 取得 order list
+    @Override
+    public List<Order> getOrders(OrderQueryParams orderQueryParams) {
+        // 找出符合條件的這一批訂單
+        List<Order> orderList = orderDao.getOrders(orderQueryParams);
+
+        // 針對每個order去取得各別的 order items
+        for (Order order : orderList) {
+            List<OrderItem> orderItemList = orderDao.getOrderItemsByOrderId(order.getOrderId());
+
+            // 將這些放在order底下
+            order.setOrderItemList(orderItemList);
+        }
+
+        return orderList;
+    }
+
+    // 取得 order 總數
+    @Override
+    public Integer countOrder(OrderQueryParams orderQueryParams) {
+        return orderDao.countOrder(orderQueryParams);
+    }
 
     // 查詢訂單資訊
     @Override
