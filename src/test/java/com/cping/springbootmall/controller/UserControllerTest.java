@@ -21,7 +21,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 // 注意：「user」在H2資料庫內是保留字，所以測試會失敗
-// 解決：先將UserDaoImpl的SQL語法中的「user」改成「users」
+// 解決：先將UserDaoImpl的SQL語法中的「user」改成「`user`」
 @AutoConfigureMockMvc
 @SpringBootTest
 public class UserControllerTest {
